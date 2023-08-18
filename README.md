@@ -23,7 +23,7 @@
 2. 下载模型(可能需要梯子加速)
    ```git clone https://huggingface.co/RicardoLee/Llama2-chat-13B-Chinese-50W```
    下载结束进入huggingface项目地址，比对本地项目文件，模型文件较大可能下载失败需要手动下载。
-3. 下载并部署gradio
+3. 下载并部署gradio  
    借助项目Chinese-LLaMA-Alpaca，地址 https://github.com/ymcui/Chinese-LLaMA-Alpaca.git
    ``````
 
