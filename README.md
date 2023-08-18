@@ -23,10 +23,14 @@
 2. 下载模型(可能需要梯子加速)
    ```git clone https://huggingface.co/RicardoLee/Llama2-chat-13B-Chinese-50W```
    下载结束进入huggingface项目地址，比对本地项目文件，模型文件较大可能下载失败需要手动下载。
-3. 下载并部署gradio  
-借助项目Chinese-LLaMA-Alpaca，地址 https://github.com/ymcui/Chinese-LLaMA-Alpaca.git
-``````
+3. 下载并部署gradio
+   
+* 修改requrement.txt里的torch版本，可以修改为自己本地已有版本，若无建议下载最新版本  
+执行 ```pip install -r requirements.txt```
 
+### 模型微调
+1. 数据预处理
+可以直接用QQ导出聊天比较多的好友
 
 ## 文档说明
 * 
