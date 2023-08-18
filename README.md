@@ -24,9 +24,17 @@
    ```git clone https://huggingface.co/RicardoLee/Llama2-chat-13B-Chinese-50W```
    下载结束进入huggingface项目地址，比对本地项目文件，模型文件较大可能下载失败需要手动下载。
 3. 下载并部署gradio
-   
-* 修改requrement.txt里的torch版本，可以修改为自己本地已有版本，若无建议下载最新版本  
-执行 ```pip install -r requirements.txt```
+执行 ```pip install -r requirements.txt```  
+其中grdio模块安装较慢，耐心等待
+gradio是一种用于构建AI界面的开源库，可以快速构建自己的应用程序并与AI模型进行交互。，这样就不用在黑黢黢的终端窗口使用大模型了。
+4. 运行gradio_demo.py
+将modelpath改为自己刚才下载的模型路径，如/root/Llama2-chat-13B-Chinese-50W
+为避免无法跑通，可以在8bit进行量化  
+```python gradio_demo.py --base_model modelpath --tokenizer_path modelpath --load_in_8bit --gpus 0```
+无8bit量化版本
+```python gradio_demo.py --base_model modelpath --tokenizer_path modelpath --gpus 0```
+点击public URL（只有72h有效期）即可进入外部分享链接
+
 
 ### 模型微调
 1. 数据预处理
