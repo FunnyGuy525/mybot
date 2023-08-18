@@ -10,11 +10,17 @@
 
 
 ## 运行条件
-* 本人使用GPU型号为 **V100 32G 、单卡
-* 建议在Linux系统操作
+* 本人使用GPU型号为 **V100 32G** 、单卡
+* 建议在Linux系统操作，数据盘至少保留80G
 
 ## 运行说明
-1. 
+### 模型部署
+1. 首先安装git-lfs(Large File Storage, 用于帮助git管理大文件)
+   ```
+   curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+   sudo apt-get install git-lfs
+   ```
+   
 
 
 ## 文档说明
