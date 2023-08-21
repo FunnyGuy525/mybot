@@ -52,7 +52,7 @@ gradio是一种用于构建AI界面的开源库，可以快速构建自己的应
 from huggingface_hub import notebook_login
 notebook_login()
 ```
-按照提示输入token，如果失败刷新重试
+按照提示输入token，如果失败刷新重试  
 4. 运行wandb初始化命令
 ```
 import wandb
