@@ -55,8 +55,7 @@ notebook_login()
 按照提示输入token，如果失败刷新重试
 4. ```
 import wandb
-wandb.init()
-```
+wandb.init()```
 需要先到：https://wandb.me/wandb-server 注册wandb  
 然后到：https://wandb.ai/authorize 复制key出来  
 
