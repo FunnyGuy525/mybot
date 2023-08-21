@@ -149,8 +149,8 @@ trainer.model.save_pretrained(output_dir)
 ```
 8. 模型合并  
 设置model_merge.py中相关模型路径并运行 
-
-
+9. 最后运行新模型
+```python gradio_demo.py --base_model new_model_path --tokenizer_path new_model_path --gpus 0```
 
 ## 文档说明
-* 
+* train_example.json是训练数据示例文件
