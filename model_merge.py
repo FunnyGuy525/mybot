@@ -9,7 +9,7 @@ model_name_or_path = ''  # 在这里填入原始模型的地址
 adapter_name_or_path = ''  # 在这里填入微调后模型的地址
 
 # 设置合并后模型导出地址
-save_path = '/root/autodl-tmp/new_model'  # 新模型导出地址
+save_path = '/root/new_model'  # 新模型导出地址
 
 # 从预训练模型中加载分词器
 tokenizer = AutoTokenizer.from_pretrained(
