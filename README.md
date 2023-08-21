@@ -63,67 +63,85 @@ wandb.init()
 5. 导入相关包，配置参数
 ```
 from datasets import load_dataset
-import torch,einops
+import torch
+import einops
 from transformers import AutoModelForCausalLM, BitsAndBytesConfig, AutoTokenizer, TrainingArguments
 from peft import LoraConfig
 from trl import SFTTrainer
 
-dataset = load_dataset("json",data_files=train_data_path,split="train")
-base_model_name = modelpath  # "/root/Llama2-chat-13B-Chinese-50W"
+# 加载训练数据集，'train_data_path' 应为训练数据文件的路径
+dataset = load_dataset("json", data_files=train_data_path, split="train")
+
+# 基础模型的名称或路径，例如 "/root/Llama2-chat-13B-Chinese-50W"
+base_model_name = modelpath
+
+# 定义 BitsAndBytesConfig 配置，用于量化模型权重
 bnb_config = BitsAndBytesConfig(
-    load_in_4bit=True,#在4bit上，进行量化
-    bnb_4bit_use_double_quant=True,# 嵌套量化，每个参数可以多节省0.4位
-    bnb_4bit_quant_type="nf4",# NF4（normalized float）或纯FP4量化
-    bnb_4bit_compute_dtype=torch.float16,
+    load_in_4bit=True,  # 使用4位量化
+    bnb_4bit_use_double_quant=True,  # 使用双量化以减少参数位数
+    bnb_4bit_quant_type="nf4",  # 使用标准化浮点数（normalized float）进行4位量化
+    bnb_4bit_compute_dtype=torch.float16,  # 使用半精度浮点数进行计算
 )
+
+# 定义设备映射，将模型加载到指定的GPU设备
 device_map = {"": 0}
-#有多个gpu时，为：device_map = {"": [0,1,2,3……]}
+# 如果有多个GPU，可以使用类似以下方式的映射：device_map = {"": [0, 1, 2, 3, ...]}
+
+# 从预训练模型加载基础模型
 base_model = AutoModelForCausalLM.from_pretrained(
-    base_model_name,#本地模型名称
-    quantization_config=bnb_config,#上面本地模型的配置
-    device_map=device_map,#使用GPU的编号
-    trust_remote_code=True,
-    use_auth_token=True
+    base_model_name,  # 本地模型名称或路径
+    quantization_config=bnb_config,  # 量化配置
+    device_map=device_map,  # 使用的GPU编号
+    trust_remote_code=True,  # 允许远程代码
+    use_auth_token=True  # 使用授权令牌（如果需要）
 )
 base_model.config.use_cache = False
 base_model.config.pretraining_tp = 1
 
+# 定义 LoraConfig 配置，用于 PeftModel
 peft_config = LoraConfig(
-    lora_alpha=16,
-    lora_dropout=0.1,
-    r=64,
-    bias="none",
-    task_type="CAUSAL_LM",
+    lora_alpha=16,  # LORA alpha 参数
+    lora_dropout=0.1,  # LORA dropout 参数
+    r=64,  # LORA中嵌入的位置编码数量
+    bias="none",  # 不使用任何偏置
+    task_type="CAUSAL_LM",  # 任务类型为Causal Language Model
 )
+
+# 加载预训练分词器
 tokenizer = AutoTokenizer.from_pretrained(base_model_name, trust_remote_code=True)
-tokenizer.pad_token = tokenizer.eos_token
+tokenizer.pad_token = tokenizer.eos_token  # 将 pad_token 设置为 eos_token，以便正确填充数据
 
+# 定义训练输出目录
 output_dir = "./results"
-training_args = TrainingArguments(
-    report_to="wandb",
-    output_dir=output_dir,#训练后输出目录
-    per_device_train_batch_size=4,#每个GPU的批处理数据量
-    gradient_accumulation_steps=4,#在执行反向传播/更新过程之前，要累积其梯度的更新步骤数
-    learning_rate=2e-4,#超参、初始学习率。太大模型不稳定，太小则模型不能收敛
-    logging_steps=10,#两个日志记录之间的更新步骤数
-    max_steps=100#要执行的训练步骤总数
-)
-max_seq_length = 512
-#TrainingArguments 的参数详解：https://blog.csdn.net/qq_33293040/article/details/117376382
 
+# 定义 TrainingArguments 训练配置
+training_args = TrainingArguments(
+    report_to="wandb",  # 使用wandb进行报告和日志记录
+    output_dir=output_dir,  # 训练后的输出目录
+    per_device_train_batch_size=4,  # 每个GPU的批次大小
+    gradient_accumulation_steps=4,  # 累积梯度的步骤数
+    learning_rate=2e-4,  # 初始学习率
+    logging_steps=10,  # 每隔多少步记录一次日志
+    max_steps=500  # 总训练步数
+)
+max_seq_length = 512  # 最大序列长度
+
+# 初始化 SFTTrainer
 trainer = SFTTrainer(
     model=base_model,
     train_dataset=dataset,
     peft_config=peft_config,
-    dataset_text_field="text",
+    dataset_text_field="text",  # 数据集中文本字段的名称
     max_seq_length=max_seq_length,
     tokenizer=tokenizer,
     args=training_args,
 )
+
 ```
 6. 开始训练
 ```trainer.train()```
-7. 保存模型
+如果训练时间过长无法接受，可以降低training_args参数中的max_steps
+8. 保存模型
 ```
 import os
 output_dir = os.path.join(output_dir, "final_checkpoint")
