@@ -20,8 +20,8 @@
    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
    sudo apt-get install git-lfs
    ```
-2. 下载模型(可能需要梯子加速)
-   ```git clone https://huggingface.co/RicardoLee/Llama2-chat-13B-Chinese-50W```
+2. 下载模型(可能需要梯子加速)  
+   ```git clone https://huggingface.co/RicardoLee/Llama2-chat-13B-Chinese-50W```  
    下载结束进入huggingface项目地址，比对本地项目文件，模型文件较大可能下载失败需要手动下载。
 3. 下载并部署gradio
 执行 ```pip install -r requirements.txt```   
@@ -31,15 +31,36 @@ gradio是一种用于构建AI界面的开源库，可以快速构建自己的应
 将modelpath改为自己刚才下载的模型路径，如/root/Llama2-chat-13B-Chinese-50W   
 为避免无法跑通，可以在8bit进行量化    
 ```python gradio_demo.py --base_model modelpath --tokenizer_path modelpath --load_in_8bit --gpus 0```   
-无8bit量化版本  
+无8bit量化版本   
 ```python gradio_demo.py --base_model modelpath --tokenizer_path modelpath --gpus 0```  
-点击public URL（只有72h有效期）即可进入外部分享链接   
+点击public URL（只有72h有效期）即可进入外部分享链接    
 
 
 ### 模型微调
 1. 数据预处理
-可以直接用QQ导出聊天文件txt文本，详细处理介绍见DialogPreprocess.ipynb文件
-2. 
+使用DialogPreprocess.ipynb笔记本 notebook文件  
+可以直接用QQ导出聊天文件txt文本，处理后得到训练集json文件train.json
+2. 接着notebook文件运行安装程序，使用-U强制升级到最新版本
+```
+!pip install -q huggingface_hub
+!pip install -q -U trl transformers accelerate peft
+!pip install -q -U datasets bitsandbytes einops wandb
+```
+3. 首先需要到：https://huggingface.co/settings/tokens 复制token，需要能访问外网
+在setting页面，创建一个新的access token
+```
+from huggingface_hub import notebook_login
+notebook_login()
+```
+按照提示输入token，如果失败刷新重试
+4. ```
+import wandb
+wandb.init()
+```
+需要先到：https://wandb.me/wandb-server 注册wandb  
+然后到：https://wandb.ai/authorize 复制key出来  
+
+
 
 ## 文档说明
 * 
